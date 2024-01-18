@@ -749,6 +749,11 @@ func (c *Config) Client() (*VCDClient, error) {
 		MaxRetryTimeout: c.MaxRetryTimeout,
 		InsecureFlag:    c.InsecureFlag}
 
+	// If the user and password are "none", shortcircuit everything
+	if c.User == "none" && c.Password == "none" {
+		return vcdClient, nil
+	}
+
 	err = ProviderAuthenticate(vcdClient.VCDClient, c.User, c.Password, c.Token, c.SysOrg, c.ApiToken, c.ApiTokenFile, c.ServiceAccountTokenFile)
 	if err != nil {
 		return nil, fmt.Errorf("something went wrong during authentication: %s", err)
